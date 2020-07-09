@@ -15,7 +15,7 @@
     // with randomly generated three-letter words
     var trial = {
       type: 'html-button-response',
-      stimulus: generateRandomStimulus(),
+      stimulus: generateRandomStimulus,
       choices: ['word', 'non-word'],
       post_trial_gap: 500
     }
@@ -24,6 +24,9 @@
     timeline.push(trial);
     timeline.push(trial);
     timeline.push(trial);
+
+    // for pedagogical purposes, log the initialization of the experiment to the console
+    console.log('jsPsych.init() about to be called. experiment will begin.')
 
     // run the experiment
     jsPsych.init({
@@ -39,6 +42,9 @@
       var letters = jsPsych.randomization.sampleWithReplacement(alphabet, 3);
       // convert the array of three letters to a string
       var word = letters.join('');
+
+      // for pedagogical purposes, log the word to the console
+      console.log('generateRandomStimulus() called. generated word: '+word)
   
       return word;
     }
