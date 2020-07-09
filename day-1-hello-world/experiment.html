@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugins/jspsych-html-keyboard-response.js"></script>
+    <link href="jspsych/css/jspsych.css" rel="stylesheet">
+  </head>
+  <body></body>
+  <script>
+
+    // This is the final result from the "hello world" example on day 1,
+    // with some additional descriptive comments
+
+    // create an empty array to hold the timeline
+    var timeline = [];
+
+    // create a list (array) of four words
+    var words = ['Welcome', 'to', 'my', 'experiment'];
+
+    // use a for loop to create one trial per word
+    // and add that trial to the timeline
+    for(var i = 0; i<words.length; i++){
+      // create the trial
+      var welcome_trial = {
+        type: 'html-keyboard-response',
+        stimulus: words[i]
+      }
+      // add the trial to the timeline
+      timeline.push(welcome_trial);
+    }
+
+    // launch the experiment
+    // the timeline parameter is the array of trials that we created above
+    // the on_finish parameter specifies a function to execute at the end of the experiment
+    jsPsych.init({
+      timeline: timeline,
+      on_finish: function(){
+        // this is a built in function to show the data on the screen
+        // it is mainly used for debugging purposes
+        jsPsych.data.displayData();
+      }
+    })
+
+  </script>
+</html>
