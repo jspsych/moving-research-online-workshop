@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Lexical decision</title>
+        <script src="jspsych/jspsych.js"></script>
+        <script src="jspsych/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych/plugins/jspsych-instructions.js"></script>
+        <link href="jspsych/css/jspsych.css" rel="stylesheet">
+    </head>
+    <body></body>
+    <script>
+        var timeline = [];
+
+        console.log()
+
+        var instructions = {
+            type: 'instructions',
+            pages: ['Welcome!','<p>Press the f key when you see a nonword.</p><p>Press the j key when you see a word.</p><p>Click the next button to start.</p>'],
+            show_clickable_nav: true
+        };
+
+        var instruction = { 
+            type:'instructions', 
+            pages:['<p>Your task is to find the target which is an <strong>octagon with a white cross inside</strong>, </p><p>and respond <strong>on which side the dot is</strong> by pressing the <strong>left or right arrow key</strong>.</p>'], 
+            show_clickable_nav:true
+        }
+        timeline.push(instruction);
+
+        var fixation = {
+            type: 'html-keyboard-response',
+            stimulus: '<span style="font-size:40px;">+</span>',
+            choices: jsPsych.NO_KEYS,
+            trial_duration: 1000
+        }
+
+        var lexical_decision_trial = {
+            type: 'html-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['f','j'],
+            stimulus_duration: 2000,
+            data: {
+                condition: jsPsych.timelineVariable('condition'), 
+                correct_response: jsPsych.timelineVariable('correct_response')
+            },
+            post_trial_gap: 1000,
+            on_finish: function(data) {
+                var acc = false;
+                if (data.correct_response == jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press)) {
+                    acc = true;
+                }
+                data.accuracy = acc;
+            }
+        };
+
+        var feedback = {
+            type: 'html-keyboard-response',
+            stimulus: function() {
+                var feedback_text = '<span style="font-size:30px;color:red;">Incorrect</span>';
+                var last_trial_accuracy = jsPsych.data.getLastTrialData().values()[0].accuracy; 
+                if (last_trial_accuracy == true) {
+                    feedback_text = '<span style="font-size:30px;color:red;">Correct!</span>'
+                }
+                return feedback_text;
+            },
+            choices: jsPsych.NO_KEYS,
+            trial_duration: 3000
+        }
+
+        var trial_info = [
+            {stimulus: '<span style="font-size:40px;">apple</span>', condition: 'word', correct_response: 'j'},
+            {stimulus: '<span style="font-size:40px;">tree</span>', condition: 'word', correct_response: 'j'},
+            {stimulus: '<span style="font-size:40px;">moxid</span>', condition: 'nonword', correct_response: 'f'},
+            {stimulus: '<span style="font-size:40px;">orap</span>', condition: 'nonword', correct_response: 'f'}
+        ];
+
+        var lexical_decision_procedure = {
+            timeline: [fixation, lexical_decision_trial, feedback],
+            timeline_variables: trial_info,
+            randomize_order: true
+        }
+        timeline.push(lexical_decision_procedure);
+
+        jsPsych.init({
+            timeline: [instruction],
+            preload_images: ['jspsych/examples/img/1.gif'],
+            on_finish: function() {
+                jsPsych.data.displayData();
+            }
+        })
+
+    </script>
+</html>
