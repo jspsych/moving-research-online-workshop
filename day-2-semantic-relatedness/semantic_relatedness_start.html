@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Semantic relatedness</title>
+        <script src="jspsych/jspsych.js"></script>
+        <script src="jspsych/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych/plugins/jspsych-html-button-response.js"></script>
+        <script src="jspsych/plugins/jspsych-audio-keyboard-response.js"></script>
+        <script src="jspsych/plugins/jspsych-instructions.js"></script>
+        <script src="js/practice_trial_info.js"></script>
+        <link href="jspsych/css/jspsych.css" rel="stylesheet">
+    </head>
+    <body></body>
+    <script>
+
+        var timeline = [];
+
+        // create list of all audio files for preloading
+        var all_audio = [];
+        for (var i=0; i<practice_trial_info.length; i++) {
+            all_audio.push(practice_trial_info[i].target_audio);
+        }
+
+        var instructions = {
+            type: 'instructions',
+            pages: [
+                '<p>In this task, you will hear a spoken word, and then see a written word.</p>'+
+                '<p>You should press the <strong>j</strong> key if the meanings of the two words are <strong>related</strong>.</p>'+
+                '<p>You should press the <strong>f</strong> key if the meanings of the two words are <strong>unrelated</strong>.</p>'+
+                '<p>Click the "Next" button for more instructions.</p>',
+                '<p>Here are some examples of words with <strong>related</strong> meanings:</p>'+
+                '<p>WATER - SWIM</p><p>PETAL - FLOWER</p>'+
+                '<p>In these examples, you would press the <strong>j</strong> key.</p>'+
+                '<p>Here are some examples of words with <strong>unrelated</strong> meanings:'+
+                '<p>APPLE - FANCY</p><p>JUMP - GARAGE</p>'+
+                '<p>In these examples, you would press the <strong>f</strong> key.</p>'+
+                '<p>Click the "Next" button to start.</p>'
+            ],
+            show_clickable_nav: true,
+            post_trial_gap: 1000
+        };
+        timeline.push(instructions);
+
+        var fixation = {
+            type: 'html-keyboard-response',
+            stimulus: '<span style="font-size:40px;">+</span>',
+            choices: jsPsych.NO_KEYS,
+            trial_duration: 500,
+            data: {
+                trial_part: 'fixation', 
+                task_part: jsPsych.timelineVariable('task_part')
+            }
+        };
+
+        var target = {
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('target_audio'),
+            prompt: '<span style="font-size:40px;">+</span>',
+            choices: jsPsych.NO_KEYS,
+            trial_ends_after_audio: true,
+            data: {
+                target: jsPsych.timelineVariable('target'),
+                probe: jsPsych.timelineVariable('probe'),
+                condition: jsPsych.timelineVariable('condition'),
+                correct_response: jsPsych.timelineVariable('correct_response'),
+                trial_part: 'target',
+                task_part: jsPsych.timelineVariable('task_part')
+            }
+        }; 
+
+        var probe = {
+            type: 'html-keyboard-response',
+            stimulus: function() {
+                return '<span style="font-size:40px;">' + jsPsych.timelineVariable('probe', true) + '</span>';
+            },
+            choices: ['f','j'],
+            data: {
+                target: jsPsych.timelineVariable('target'),
+                probe: jsPsych.timelineVariable('probe'),
+                condition: jsPsych.timelineVariable('condition'),
+                correct_response: jsPsych.timelineVariable('correct_response'),
+                trial_part: 'probe',
+                task_part: jsPsych.timelineVariable('task_part')
+            }, 
+            on_finish: function(data) {
+                var acc = false;
+                if (data.correct_response == jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press)) {
+                    acc = true;
+                }
+                data.accuracy = acc;
+            }
+        };
+
+        var feedback = {
+            type: 'html-keyboard-response',
+            stimulus: function() {
+                var feedback_text = '<span style="color:red;font-size:30px;">Incorrect.</span>';
+                var last_resp_acc = jsPsych.data.getLastTrialData().values()[0].accuracy;
+                if (last_resp_acc == true) {
+                    feedback_text = '<span style="color:green;font-size:30px;">Correct!</span>'
+                }
+                return feedback_text;
+            },
+            choices: jsPsych.NO_KEYS,
+            trial_duration: 2000
+        };
+
+        var prac_procedure = {
+            timeline: [fixation, target, probe, feedback],
+            timeline_variables: practice_trial_info,
+            randomize_order: true
+        };
+        timeline.push(prac_procedure);
+
+        var end_screen = {
+            type: 'html-keyboard-response',
+            stimulus: "Thanks, you're done with the task!", 
+            choices: ['space']
+        };
+        timeline.push(end_screen);
+
+        jsPsych.init({
+            timeline: timeline,
+            preload_audio: all_audio,
+            show_preload_progress_bar: true,
+            use_webaudio: false,
+            on_finish: function() {
+                jsPsych.data.displayData();
+            }
+        })
+
+    </script>
+<html>
