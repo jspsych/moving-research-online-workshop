@@ -43,7 +43,7 @@ jsPsych.plugins["moving-window"] = (function() {
 
     // create a function for showing the stimulus and collecting the response
     function show_stimulus(position){
-      display_element.innerHTML = '<p style="font-family:monospace;">' + create_moving_window(trial.words, position) + '</p>';
+      display_element.innerHTML = '<p style="font-size: 24px; font-family:monospace;">' + create_moving_window(trial.words, position) + '</p>';
 
       jsPsych.pluginAPI.getKeyboardResponse({
         callback_function: after_response,
