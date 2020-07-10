@@ -67,7 +67,10 @@
             stimulus: '<span style="font-size:40px;">+</span>',
             choices: jsPsych.NO_KEYS,
             trial_duration: 500,
-            data: {trial_part: 'fixation', task_part: jsPsych.timelineVariable('task_part')}
+            data: {
+                trial_part: 'fixation', 
+                task_part: jsPsych.timelineVariable('task_part')
+            }
         };
 
         var target = {
