@@ -31,16 +31,16 @@
         }
         
         // combine ambiguous and filler trial info arrays into a single array to use for timeline variables
-        var trial_info = amb_trial_info.concat(filler_trial_info);
-        console.log(trial_info);
+        var main_trial_info = amb_trial_info.concat(filler_trial_info);
+        console.log(main_trial_info);
 
         // create list of all audio files for preloading
         var all_audio = [];
         for (var i=0; i<practice_trial_info.length; i++) {
             all_audio.push(practice_trial_info[i].target_audio);
         }
-        for (var i=0; i<trial_info.length; i++) {
-            all_audio.push(trial_info[i].target_audio);
+        for (var i=0; i<main_trial_info.length; i++) {
+            all_audio.push(main_trial_info[i].target_audio);
         }
 
         var instructions = {
@@ -95,6 +95,7 @@
                 return '<span style="font-size:40px;">' + jsPsych.timelineVariable('probe', true) + '</span>';
             },
             choices: ['f','j'],
+            post_trial_gap: 500,
             data: {
                 target: jsPsych.timelineVariable('target'),
                 probe: jsPsych.timelineVariable('probe'),
@@ -178,7 +179,7 @@
 
         var main_procedure = {
             timeline: [fixation, target, probe],
-            timeline_variables: trial_info,
+            timeline_variables: main_trial_info,
             randomize_order: true
         };
         timeline.push(main_procedure);
@@ -197,8 +198,8 @@
             stimulus: function() {
                 var feedback_string = "<p>Great! You're done with that task.</p>";
                 feedback_string += generate_feedback_string('dom', 'Dominant-Related Word Pairs');
-                feedback_string += generate_feedback_string('sub', 'Subordinate-Related Pairs');
-                feedback_string += generate_feedback_string('fil', 'Unrelated Fillers');
+                feedback_string += generate_feedback_string('sub', 'Subordinate-Related Word Pairs');
+                feedback_string += generate_feedback_string('fil', 'Unrelated Word Pairs');
                 feedback_string += '<p>Press the space bar to finish.</p>'
                 return feedback_string;
             }, 
