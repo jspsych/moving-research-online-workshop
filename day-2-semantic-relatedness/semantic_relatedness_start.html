@@ -8,6 +8,8 @@
         <script src="jspsych/plugins/jspsych-audio-keyboard-response.js"></script>
         <script src="jspsych/plugins/jspsych-instructions.js"></script>
         <script src="js/practice_trial_info.js"></script>
+        <script src="js/amb_trial_info_v1.js"></script>
+        <script src="js/filler_trial_info.js"></script>
         <link href="jspsych/css/jspsych.css" rel="stylesheet">
     </head>
     <body></body>
@@ -15,10 +17,16 @@
 
         var timeline = [];
 
+        // combine trial information from the ambiguous word and filler arrays to use in the main task
+        var main_trial_info = amb_trial_info_v1.concat(filler_trial_info);
+
         // create list of all audio files for preloading
         var all_audio = [];
         for (var i=0; i<practice_trial_info.length; i++) {
             all_audio.push(practice_trial_info[i].target_audio);
+        }
+        for (var i=0; i<main_trial_info.length; i++) {
+            all_audio.push(main_trial_info[i].target_audio);
         }
 
         var instructions = {
@@ -74,6 +82,7 @@
                 return '<span style="font-size:40px;">' + jsPsych.timelineVariable('probe', true) + '</span>';
             },
             choices: ['f','j'],
+            post_trial_gap: 500,
             data: {
                 target: jsPsych.timelineVariable('target'),
                 probe: jsPsych.timelineVariable('probe'),
@@ -111,6 +120,21 @@
             randomize_order: true
         };
         timeline.push(prac_procedure);
+
+        var start_task = {
+            type: 'html-button-response',
+            stimulus: "<p>Great! You're done with the practice trials.</p><p>Now you won't see any feedback about your response.</p><p>Click the 'Next' button to start.</p>",
+            choices: ['Next'],
+            response_ends_trial: true
+        }
+        timeline.push(start_task);
+
+        var main_procedure = {
+            timeline: [fixation, target, probe],
+            timeline_variables: main_trial_info,
+            randomize_order: true
+        };
+        timeline.push(main_procedure);
 
         var end_screen = {
             type: 'html-keyboard-response',
