@@ -20,7 +20,7 @@
         var repeat_prac = false;
 
         // randomly choose a version: 1 or 2
-        var version = jsPsych.randomization.sampleWithoutReplacement([1,2],1);
+        var version = jsPsych.randomization.sampleWithoutReplacement([1,2],1)[0];
 
         // get the trial info for this version
         var amb_trial_info;
