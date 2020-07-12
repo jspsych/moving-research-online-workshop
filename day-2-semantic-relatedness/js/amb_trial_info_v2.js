@@ -33,9 +33,9 @@ var amb_trial_info_v2 = [
     },
     {
         target: "straw",
+        probe: "hay",
         correct_response: "j",
         target_audio: "audio/a_straw.mp3",
-        probe: "hay",
         condition: "sub",
         task_part: "main"
     },

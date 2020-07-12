@@ -25,9 +25,9 @@ var amb_trial_info_v1 = [
     },
     {
         target: "pen",
+        probe: "pig",
         correct_response: "j",
         target_audio: "audio/a_pen.mp3",
-        probe: "pig",
         condition: "sub",
         task_part: "main"
     },
